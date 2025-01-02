@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>競馬データ入力フォーム</title>
     <link rel="stylesheet" href="keiba.css">
+    <style>
+        .editing-background {
+            background-color: #e6f7ff;
+        }
+    </style>
 </head>
 <body>
     <h1>競馬データ入力フォーム</h1>
@@ -66,6 +71,7 @@
         </div>
 
         <button type="button" id="add-data">データ追加</button>
+        <button type="button" id="update-data" style="display:none;">更新</button>
     </form>
 
     <h2>入力したデータ</h2>
@@ -101,6 +107,7 @@
             let selectedVenue = '';
             let selectedRaceNumber = '';
             let selectedBetType = '';
+            let editingRow = null;
 
             function setButtonSelected(group, value) {
                 document.querySelectorAll(group).forEach(btn => {
@@ -154,36 +161,91 @@
                 const editButton = document.createElement('button');
                 editButton.innerText = '編集';
                 editButton.addEventListener('click', () => {
-                    // 編集機能を追加
-                });
-                editCell.appendChild(editButton);
+    loadRowForEditing(row);
+});
+editCell.appendChild(editButton);
 
-                calculateTotals();
-                saveData();
-            });
+calculateTotals();
+saveData();
+});
 
-            function calculateTotals() {
-                let totalAmount = 0;
-                let totalReturn = 0;
-                let totalProfit = 0;
+document.getElementById('update-data').addEventListener('click', () => {
+    if (editingRow) {
+        const date = document.getElementById('date').value;
+        const amount = parseFloat(document.getElementById('amount').value) || 0;
+        const returnAmount = parseFloat(document.getElementById('return').value) || 0;
+        const profit = returnAmount - amount;
+        const rate = (amount === 0) ? 0 : (returnAmount / amount * 100).toFixed(2);
 
-                const rows = document.getElementById('data-table').getElementsByTagName('tbody')[0].rows;
-                for (let row of rows) {
-                    totalAmount += parseFloat(row.cells[4].innerText) || 0;
-                    totalReturn += parseFloat(row.cells[5].innerText) || 0;
-                    totalProfit += parseFloat(row.cells[6].innerText) || 0;
-                }
+        editingRow.cells[0].innerText = date;
+        editingRow.cells[1].innerText = selectedVenue;
+        editingRow.cells[2].innerText = selectedRaceNumber;
+        editingRow.cells[3].innerText = selectedBetType;
+        editingRow.cells[4].innerText = amount;
+        editingRow.cells[5].innerText = returnAmount || "ー";
+        editingRow.cells[6].innerText = profit || "ー";
+        editingRow.cells[7].innerText = rate + '%';
 
-                document.getElementById('total-amount').innerText = totalAmount;
-document.getElementById('total-return').innerText = totalReturn;
-const totalProfitElement = document.getElementById('total-profit');
-totalProfitElement.innerText = totalProfit;
-if (totalProfit < 0) {
-    totalProfitElement.classList.add('red');
-} else {
-    totalProfitElement.classList.remove('red');
+        // 編集行の背景色を元に戻す
+        editingRow.classList.remove('editing-background');
+
+        editingRow = null;
+        document.getElementById('add-data').style.display = 'inline-block';
+        document.getElementById('update-data').style.display = 'none';
+
+        calculateTotals();
+        saveData();
+    }
+});
+
+function loadRowForEditing(row) {
+    // 既存の編集行があれば背景色を元に戻す
+    if (editingRow) {
+        editingRow.classList.remove('editing-background');
+    }
+
+    editingRow = row;
+
+    document.getElementById('date').value = row.cells[0].innerText;
+    selectedVenue = row.cells[1].innerText;
+    selectedRaceNumber = row.cells[2].innerText;
+    selectedBetType = row.cells[3].innerText;
+    document.getElementById('amount').value = parseFloat(row.cells[4].innerText) || 0;
+    document.getElementById('return').value = parseFloat(row.cells[5].innerText) || 0;
+
+    setButtonSelected('.venue', selectedVenue);
+    setButtonSelected('.race-number', selectedRaceNumber);
+    setButtonSelected('.bet-type', selectedBetType);
+
+    // 編集行の背景色を薄い青に変更
+    row.classList.add('editing-background');
+
+    document.getElementById('add-data').style.display = 'none';
+    document.getElementById('update-data').style.display = 'inline-block';
 }
-document.getElementById('total-rate').innerText = (totalAmount === 0) ? '0%' : ((totalReturn / totalAmount) * 100).toFixed(2) + '%';
+
+function calculateTotals() {
+    let totalAmount = 0;
+    let totalReturn = 0;
+    let totalProfit = 0;
+
+    const rows = document.getElementById('data-table').getElementsByTagName('tbody')[0].rows;
+    for (let row of rows) {
+        totalAmount += parseFloat(row.cells[4].innerText) || 0;
+        totalReturn += parseFloat(row.cells[5].innerText) || 0;
+        totalProfit += parseFloat(row.cells[6].innerText) || 0;
+    }
+
+    document.getElementById('total-amount').innerText = totalAmount;
+    document.getElementById('total-return').innerText = totalReturn;
+    const totalProfitElement = document.getElementById('total-profit');
+    totalProfitElement.innerText = totalProfit;
+    if (totalProfit < 0) {
+        totalProfitElement.classList.add('red');
+    } else {
+        totalProfitElement.classList.remove('red');
+    }
+    document.getElementById('total-rate').innerText = (totalAmount === 0) ? '0%' : ((totalReturn / totalAmount) * 100).toFixed(2) + '%';
 }
 
 document.getElementById('export-csv').addEventListener('click', () => {
@@ -266,7 +328,7 @@ function loadData() {
             const editButton = document.createElement('button');
             editButton.innerText = '編集';
             editButton.addEventListener('click', () => {
-                // 編集機能を追加
+                loadRowForEditing(row);
             });
             editCell.appendChild(editButton);
         }
