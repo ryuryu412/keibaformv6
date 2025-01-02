@@ -77,6 +77,11 @@ p {
     color: red;
 }
 
+.editing-background {
+    background-color: #e6f7ff;
+}
+
+
 /* スマートフォン向けのレスポンシブ対応 */
 @media screen and (max-width: 600px) {
     body {
@@ -108,3 +113,4 @@ p {
         font-size: 12px;
     }
 }
+ 
