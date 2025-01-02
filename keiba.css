@@ -1,0 +1,110 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    font-size: 18px;
+}
+
+h1, h2 {
+    color: #333;
+    font-size: 24px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: stretch;  /* ボタンの縦位置を揃える */
+}
+
+.button-group button {
+    flex: 1 1 calc(100% / 6 - 10px);
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    box-sizing: border-box;
+    white-space: nowrap;  /* 文字が縦並びにならないように */
+}
+
+button.selected {
+    background-color: red;
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+.red {
+    color: red;
+}
+
+/* スマートフォン向けのレスポンシブ対応 */
+@media screen and (max-width: 600px) {
+    body {
+        margin: 10px;
+    }
+
+    form {
+        font-size: 14px;
+    }
+
+    .button-group {
+        flex-wrap: wrap;
+        align-items: stretch;  /* ボタンの縦位置を揃える */
+    }
+
+    .button-group button {
+        flex: 1 1 calc(100% / 6 - 10px);  /* 6つ横並びに表示 */
+        margin-bottom: 5px;
+        padding: 12px;  /* ボタンを少し大きくする */
+        font-size: 14px;  /* テキストサイズを少し小さくする */
+        white-space: nowrap;  /* 文字が縦並びにならないように */
+    }
+
+    .form-group input {
+        font-size: 14px;
+    }
+
+    table, th, td {
+        font-size: 12px;
+    }
+}
